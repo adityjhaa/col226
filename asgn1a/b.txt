@@ -1,0 +1,15 @@
+1.
+
+Tests for unionI:
+
+Input : unionI([1,2],[1,9],P).
+Output : P = [1, 2, 9].
+
+Input : unionI([2,1,9],[],P).
+Output : P = [2, 1, 9].
+
+Input : unionI([],[2,1,9],P).
+Output : P = [2, 1, 9].
+
+Input : unionI([[1,2,3],[4,5]],[[5,4],[1,3]],P).
+

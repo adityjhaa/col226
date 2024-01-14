@@ -6,7 +6,4 @@ mem((X,Y), reftranclos(R,S)) :- mem((X,Z), R), mem((Z,Y), reftranclos(R,S)), !.
 
 2. Reflexive-transitive-symmetric closure
 
-mem((X,Y), reftransymclos(R,S)) :- mem((X,Y), refclos(R,S)), !.
-mem((X,Y), reftransymclos(R,S)) :- mem((X,Z), R), mem((Z,Y), reftransymclos(R,S)), !.
-mem((X,Y), reftransymclos(R,S)) :- mem((Y,X), R), !.
-mem((X,Y), reftransymclos(R,S)) :- mem((Y,X), reftransymclos(R,S)), !.
+
