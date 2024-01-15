@@ -23,9 +23,7 @@ remdups([ ], [ ]) :- !.
 remdups([X|R], [X|Z]) :- del(X, R, L), remdups(L, Z).
 
 
-/* Assuming no duplicates in S1, S2
-
- here is an implementation of union of S1, S2 */
+/* Assuming no duplicates in S1, S2 here is an implementation of union of S1, S2 */
 
 unionI([ ], S2, S2) :- !.
 
