@@ -5,10 +5,18 @@ mem(X,[X|_]) :- !.
 mem(X,[_|R]) :- mem(X,R), !.
 
 /*-------1-------*/
-
+mem((X,Y), reftranclos(R,S)) :- mem((X,Y), R), !.
+mem((X,X), reftranclos(R,S)) :- mem(X, S), !.
+mem((X,Y), reftranclos(R,S)) :- mem((X,Z), R), mem((Z,Y), reftranclos(R,S)), !.
+mem((X,Y), reftranclos(R,S)) :- mem((Z,Y), R), mem((X,Z), reftranclos(R,S)), !.
 
 /*-------2-------*/
-
+mem((X,Y), reftransymclos(R,S)) :- mem((X,Y), R), !.
+mem((X,X), reftransymclos(R,S)) :- mem(X, S), !.
+mem((X,Y), reftransymclos(R,S)) :- mem((Y,X), R), !.
+mem((X,Y), reftransymclos(R,S)) :- mem((X,Z), R), mem((Z,Y), reftransymclos(R,S)), !.
+mem((X,Y), reftransymclos(R,S)) :- mem((Y,X), reftransymclos(R,S)), !.
+mem((X,Y), reftransymclos(R,S)) :- mem((Z,Y), R), mem((X,Z), reftransymclos(R,S)), !.
 
 /*----------------------B----------------------*/
 
@@ -174,9 +182,22 @@ Examples to check if the cartesian product implementation is correct.
 */
 
 /*-------7-------*/
-arepowersetsequal(P1,P2).
+/*subset and equal set implementation*/
+subset([],S) :- !.
+subset([X|L],S2) :- mem(X,S2), subset(L,S2).
+eqset(S1,S2) :- subset(S1,S2), subset(S2,S1).
+/*mem2 is to check if a set is a member or set of sets*/
+mem2(L,[]) :- fail.
+mem2(L,[A|S]) :- eqset(L,A), !.
+mem2(L,[_|S]) :- mem2(L,S).
+/*subset2 is to check if a set of set is a subset of another set of sets*/
+subset2([],L) :- !.
+subset2([X|L], S2) :- mem2(X, S2), subset2(L,S2).
+/*areequalpower is to check if two powersets are identical*/
+areequalpower(P1,P2) :- subset2(P1,P2), subset2(P2,P1).
 /*
-
-
+P1 and P2 are the powersets of sets S1 and S2. We get these using the powerI implementation. We use the eqset to check if 2 sets are equal. This helps in the function mem2 to check if a set is a part of a set of sets. This helps define the subset2 function which checks if a set of sets is a subset to another set of sets. This is used to define if two sets of sets are equal.
+P1 = powerI(S1), P2 = powerI(S2).
+If S1 and S2 are the same and only the ordering is different, then they should produce the same powerset. The areequalpower function checks this case and returns true. But if sets S1 and S2 are different, then the powersets are different and returns false.
 */
 
