@@ -20,3 +20,23 @@ Surely, this implementation finds the intersection of two sets without faults.
 */
 
 
+/*
+4. Examples to check if the difference implementation is correct.
+
+    Input : 
+    Output : 
+
+    Input : 
+    Output : 
+
+    Input : 
+    Output : 
+
+    Input : 
+    Output : 
+
+    Input : 
+    Output : 
+
+
+*/
