@@ -94,3 +94,37 @@ let rec eval e = match e with
 
 ;;
 
+type opcode = LDN of int | LDB of bool | PLUS | TIMES | AND | OR | NOT | EQ | GT;;
+
+let rec compile e = match e with
+    Num n -> [ LDN n ]
+  | Bl b -> [LDB (myBool2bool b) ] (* Constants *)
+  | Plus (e1, e2) -> (compile e1) @ (compile e2) @ [PLUS]
+  | Times (e1, e2) -> (compile e1) @ (compile e2) @ [TIMES]
+  | And (e1, e2) -> (compile e1) @ (compile e2) @ [AND]
+  | Or (e1, e2) -> (compile e1) @ (compile e2) @ [OR]
+  | Not e1 -> (compile e1) @ [NOT]
+  | Eq (e1, e2) -> (compile e1) @ (compile e2) @ [EQ]
+  | Gt(e1, e2) -> (compile e1) @ (compile e2) @ [GT]
+;;
+
+exception Stuck of (values list * opcode list);;
+
+let rec stkmc s c = match s, c with
+    v::_, [ ] -> v (* no more opcodes, return top *)
+  | s, (LDN n)::c' -> stkmc ((N n)::s) c'
+  | s, (LDB b)::c' -> stkmc ((B b)::s) c'
+  | (N n2)::(N n1)::s', PLUS::c' -> stkmc (N(n1+n2)::s') c'
+  | (N n2)::(N n1)::s', TIMES::c' -> stkmc (N(n1*n2)::s') c'
+  | (B b2)::(B b1)::s', AND::c' -> stkmc (B(b1 && b2)::s') c'
+  | (B b2)::(B b1)::s', OR::c' -> stkmc (B(b1 || b2)::s') c'
+  | (B b1)::s', NOT::c' -> stkmc (B(not b1)::s') c'
+  | (N n2)::(N n1)::s', EQ::c' -> stkmc (B(n1 = n2)::s') c'
+  | (N n2)::(N n1)::s', GT::c' -> stkmc (B(n1 > n2)::s') c'
+  | _, _ -> raise (Stuck (s, c))
+;;
+
+
+
+
+
