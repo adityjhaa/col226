@@ -1,3 +1,17 @@
+/*
+Interpreter
+*/
+
+eval(numeral(N),N) :- integer(N).
+eval(plus(E1,E2), N) :- eval(E1, N1), eval(E2, N2), N is N1+N2.
+eval(times(E1,E2), N) :- eval(E1, N1), eval(E2, N2), N is N1*N2.
+
+/*
+A test case:
+eval( plus(times(numeral(3), numeral(4)), times(numeral(5), numeral(6))), V).
+
+V = 42.
+*/
 
 /*
 Specifications
