@@ -24,7 +24,7 @@ hastype(G,mynor(E1,E2),boolT):- hastype(G,E1,boolT), hastype(G,E2,boolT).
 hastype(G,mynand(E1,E2),boolT):- hastype(G,E1,boolT), hastype(G,E2,boolT).
 hastype(G,myxor(E1,E2),boolT):- hastype(G,E1,boolT), hastype(G,E2,boolT).
 hastype(G,myxnor(E1,E2),boolT):- hastype(G,E1,boolT), hastype(G,E2,boolT).
-v
+
 
 
 
