@@ -4,9 +4,12 @@ mem(X,[X|_]) :- !.
 mem(X,[_|R]) :- mem(X,R), !.
 
 
+is_boolean(true).
+is_boolean(false).
+
 /*base cases*/
-hastype(G,intT(N),intT):- !.
-hastype(G,boolT(B),boolT):- !.
+hastype(G,N,intT):- integer(N).
+hastype(G,B,boolT):- !.
 hastype(G,varT(X),intT):- mem((X,intT),G).
 hastype(G,varT(X),boolT):- mem((X,boolT),G).
 /*int arguments with int result*/
