@@ -1,10 +1,8 @@
 .DEFAULT_GOAL := run
 
-run: tokenizer
-	@ocamlrun tokenizer
-	@rm tokenizer.cm*
-	@rm tokenizer
+run: 
+	@ocamlbuild main.native
 
-tokenizer: tokenizer.ml
-	@ocamlc tokenizer.ml -o tokenizer
-
+clean:
+	@rm -rf _build/
+	@rm -f main.native
