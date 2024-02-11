@@ -36,10 +36,34 @@ rule token = parse
         { BOOLEAN false }
     | ['0'-'9']+ as n
         { INT (int_of_string n) }
+    | ['"'] ['!' '#'-'~']* ['"'] as s
+        { LITERAL s }
+    | "and"
+        { AND }
+    | "&&"
+        { AND }
+    | "||"
+        { OR }
+    | "or"
+        { OR }
+    | "not"
+        { NOT }
+    | ['!']
+        { NOT }
+    | ['.']
+        { DOT }
     | ['(']
-        { OPEN_BRAC }
+        { OPEN_PARENTHESIS }
     | [')']
-        { CLOSE_BRAC }
+        { CLOSE_PARENTHESIS }
+    | ['{']
+        { OPEN_BRACE }
+    | ['}']
+        { CLOSE_BRACE }
+    | [']']
+        { OPEN_SQUARE }
+    | ['[']
+        { CLOSE_SQUARE }
     | [',']
         { COMMA }
     | [';']
