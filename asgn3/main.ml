@@ -27,6 +27,10 @@ let print_tokens = function
   | OR -> "boolean operator (OR)"
   | NOT -> "boolean operator (NOT)"
   | DOT -> ". : DOT operator"
+  | CONCATENATE -> "con : CONCATENATE operator"
+  | SUBSTR -> "substr : substring operator"
+  | LEN -> "len : string length"
+  | INV -> "inv : string inverse"
   | IDENTIFIER i -> sprintf "%s : IDENTIFIER" i
   | KEYWORD v -> sprintf "%s : KEYWORD" v
   | BOOLEAN b -> sprintf "%b : BOOLEAN" b

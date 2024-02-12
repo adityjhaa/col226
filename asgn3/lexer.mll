@@ -36,7 +36,7 @@ rule token = parse
         { BOOLEAN false }
     | ['0'-'9']+ as n
         { INT (int_of_string n) }
-    | ['"'] ['!' '#'-'~']* ['"'] as s
+    | ['"'] ['!' '#'-'~' ' ']* ['"'] as s
         { LITERAL s }
     | "and"
         { AND }
@@ -52,6 +52,14 @@ rule token = parse
         { NOT }
     | ['.']
         { DOT }
+    | "con"
+        { CONCATENATE }
+    | "substr"
+        { SUBSTR }
+    | "len"
+        { LEN }
+    | "inv"
+        { INV }
     | ['(']
         { OPEN_PARENTHESIS }
     | [')']

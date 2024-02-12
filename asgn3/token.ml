@@ -20,6 +20,10 @@ type token =
 | OR
 | NOT
 | DOT
+| CONCATENATE
+| SUBSTR
+| LEN
+| INV
 | OPEN_PARENTHESIS
 | CLOSE_PARENTHESIS
 | OPEN_BRACE
@@ -33,6 +37,6 @@ type token =
 | ERROR
 ;;
 
-let keywords = ["let"; "int"; "bool"; "double"; "string"; "char"; "if"; "then"; "else"; "pair"; "first"; "second"; "for"; "while"; "print"; "in"; "typedef"; "rec"; "return"];;
+let keywords = ["let"; "int"; "bool"; "double"; "string"; "char"; "if"; "then"; "else"; "pair"; "first"; "second"; "for"; "each"; "while"; "print"; "in"; "typedef"; "rec"; "return"];;
 
 let is_key s = List.mem s keywords;;
