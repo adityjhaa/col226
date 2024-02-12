@@ -13,3 +13,6 @@ Write a tokeniser in OCaml for the toy calculator (over the extended syntax for 
 Also compute the numbers that you recognize as part of the tokenisation process (as done with digit sequences in the class notes). Feel free to consider a token set that is larger than this, but it must subsume these tokens. Provide enough test cases to demonstrate the correctness of your tokeniser. 
 
 
+### Build and run
+    $ make
+    $ ./main.native 
