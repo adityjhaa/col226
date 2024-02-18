@@ -36,7 +36,7 @@ rule token = parse
         { BOOLEAN false }
     | ['0'-'9']+ as n
         { INT (int_of_string n) }
-    | ['"'] ['!' '#'-'~' ' ']* ['"'] as s
+    | ['\"'] ['!' '#'-'~' ' ']* ['\"'] as s
         { LITERAL s }
     | "and"
         { AND }
@@ -80,7 +80,7 @@ rule token = parse
         { if is_key v then KEYWORD v else IDENTIFIER v }
     | eof 
         { EOF }
-    | ['A'-'Z' '\''] ['A'-'Z' '\'']* as c
+    | ['A'-'Z' '\'']+ as c
         { CAPERROR c }
     | _ 
         { ERROR }
