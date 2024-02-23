@@ -52,6 +52,10 @@ rule token = parse
         { NOT }
     | ['.']
         { DOT }
+    | "++"
+        { INCREMENTER }
+    | "--"
+        { DECREMENTER }
     | "con"
         { CONCATENATE }
     | "substr"
