@@ -10,8 +10,7 @@ is_boolean(false).
 /*base cases*/
 hastype(G,N,intT):- integer(N).
 hastype(G,B,boolT):- !.
-hastype(G,varT(X),intT):- mem((X,intT),G).
-hastype(G,varT(X),boolT):- mem((X,boolT),G).
+hastype(G,varT(X),T):- mem((X,T),G).
 /*int arguments with int result*/
 hastype(G,add(E1,E2),intT):- hastype(G,E1,intT), hastype(G,E2,intT).
 hastype(G,subt(E1,E2),intT):- hastype(G,E1,intT), hastype(G,E2,intT).
