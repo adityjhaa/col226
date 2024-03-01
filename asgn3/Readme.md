@@ -14,5 +14,7 @@ Also compute the numbers that you recognize as part of the tokenisation process 
 
 
 ### Build and run
-    $ make
-    $ ./main.native 
+```bash
+make
+./main.native
+```
