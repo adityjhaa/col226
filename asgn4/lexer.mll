@@ -1,5 +1,5 @@
 {
-    Open Parser;;
+    open Parser;;
     exception InvalidToken of char;;
 }
 
