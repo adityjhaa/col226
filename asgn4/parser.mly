@@ -4,10 +4,10 @@
 
 %token <int> INT
 %token <string> VAR CONST
-%token LPAREN RPAREN LBRACKET RBRACKET ADD SUB MUL DIV EQUAL NOT_EQUAL GT LT COMMA CUT ARROW DOT EOF PIPE
+%token LPAREN RPAREN LBRACKET RBRACKET ADD SUB MUL DIV EQUAL NOT_EQUAL GT LT NOT COMMA CUT ARROW DOT EOF PIPE UNDERSCORE
 
 %left COMMA
-%nonassoc EQUAL LT GT PIPE
+%nonassoc EQUAL LT GT PIPE NOT
 %left ADD SUB MUL DIV
 %nonassoc DOT
 
@@ -62,6 +62,8 @@ atomic:
         { Atom("<", [$1; $3]) }
     | term GT term
         { Atom(">", [$1; $3]) }
+    | NOT term
+        { Atom("not", [$2]) }
     | CUT
         { Atom("!", []) }
 ;
@@ -76,8 +78,12 @@ term_list:
 term:
     | LPAREN term RPAREN
         { $2 }
+    | LPAREN term COMMA term
+        { Tuple($2,$4) }
     | VAR
         { Variable($1) }
+    | UNDERSCORE
+        { Under }
     | CONST
         { Node($1, []) }
     | INT
@@ -98,17 +104,16 @@ term:
 
 list:
     | LBRACKET RBRACKET
-        { Node("empty", []) }
+        { Node("emptylist", []) }
     | LBRACKET list_body RBRACKET
         { $2 }
 ;
 
 list_body:
     | term
-        { Node("list", [$1; Node("empty", [])]) }
+        { Node("listitem", [$1]) }
     | term COMMA list_body
-        { Node("list", [$1; $3]) }
-    | term PIPE list_body
-        { Node("_list", [$1; $3]) }
+        { Node("listitem", [$1; $3]) }
+    | term PIPE term
+        { Node("listitem", [$1; $3]) }
 ;
-

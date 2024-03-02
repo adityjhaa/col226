@@ -30,6 +30,8 @@ rule token = parse
         { LT }
     | "<>"
         { NOT_EQUAL }
+    | "\+"
+        { NOT }
     | [',']
         { COMMA }
     | ['!']
@@ -48,7 +50,7 @@ rule token = parse
         { VAR(v) }
     | ['a'-'z']['a'-'z' 'A'-'Z' '0'-'9' '_']* | ['"'] ['!' '#'-'~' ' ']+ ['"'] as c
         { CONST(c) }
-    | ['%']
+    | ['%'] | "//"
         { line_comment lexbuf }
     | "/*"
         { all_comment lexbuf }

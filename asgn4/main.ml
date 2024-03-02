@@ -24,8 +24,8 @@ let write_to_file file_name content =
 ;;
 
 let () =
-  if Array.length Sys.argv <> 2 then begin
-    Printf.printf "Usage: %s <input_file>\n" Sys.argv.(0);
+  if Array.length Sys.argv <> 2 || length Sys.argv.(1) < 5  then begin
+    Printf.printf "Usage: %s input_file.mol \n" Sys.argv.(0);
     exit 1
   end else begin
     let file_name = Sys.argv.(1) in
@@ -34,4 +34,6 @@ let () =
     let ast_str = Ast.string_of_program program_ast in
     write_to_file (s ^ ".ast") ast_str
   end
+  
 ;;
+
