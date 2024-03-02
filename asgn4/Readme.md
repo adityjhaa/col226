@@ -20,3 +20,19 @@ The abstract structure of a Prolog program is the following:
 - An atomic formula is a k-ary predicate symbol followed by k terms.
 - A term is either a variable, a constant, or a k-ary function symbol with k subterms.
 - A goal is a sequence of atomic formulas.
+
+<hr>
+
+**Build**
+```bash
+make
+```
+<br>
+
+**Run**
+```bash
+./main.native <input_file_path>
+```
+
+<hr>
+
