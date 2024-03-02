@@ -38,6 +38,8 @@ rule token = parse
         { ARROW }
     | ['|']
         { PIPE }
+    | ['_']
+        { UNDERSCORE }
     | ['.']
         { DOT }
     | ['0'] | ['1'-'9']['0'-'9']* as n
