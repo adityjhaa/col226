@@ -3,7 +3,6 @@ asgn3/main.native
 asgn4/_build/
 asgn4/main.native
 asgn4/base/
-asgn4/*.mol
-asgn4/*.ast
 asgn4/usage.txt
+
 
