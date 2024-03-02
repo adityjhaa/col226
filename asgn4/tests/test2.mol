@@ -1,0 +1,6 @@
+likes(john, pizza).
+likes(mary, pizza).
+likes(mary, sushi).
+likes(sam, sushi).
+
+friend(X, Y) -> likes(X, Z), likes(Y, Z).

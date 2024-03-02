@@ -1,0 +1,34 @@
+Program : 
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : mem(
+					Variable : X,
+					Constant : emptylist)
+		Body: 
+			fail
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : mem(
+					Variable : X,
+					label : listitem(
+					Variable : X,
+					 _ ))
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : mem(
+					Variable : X,
+					label : listitem(
+					 _ ,
+					Variable : R))
+		Body: 
+			atom : 
+				label : mem(
+					Variable : X,
+					Variable : R)
+			!
+EOF

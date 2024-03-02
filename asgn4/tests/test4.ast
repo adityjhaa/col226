@@ -1,0 +1,310 @@
+Program : 
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : del(
+					Variable : X,
+					Constant : emptylist,
+					Constant : emptylist)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : del(
+					Variable : X,
+					label : listitem(
+					Variable : X,
+					Variable : R),
+					Variable : Z)
+		Body: 
+			atom : 
+				label : del(
+					Variable : X,
+					Variable : R,
+					Variable : Z)
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : del(
+					Variable : X,
+					label : listitem(
+					Variable : Y,
+					Variable : R),
+					label : listitem(
+					Variable : Y,
+					Variable : Z))
+		Body: 
+			atom : 
+				label : del(
+					Variable : X,
+					Variable : R,
+					Variable : Z)
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : remdup(
+					Constant : emptylist,
+					Constant : emptylist)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : remdup(
+					label : listitem(
+					Variable : X,
+					Variable : R),
+					label : listitem(
+					Variable : X,
+					Variable : Z))
+		Body: 
+			atom : 
+				label : del(
+					Variable : X,
+					Variable : R,
+					Variable : L)
+			atom : 
+				label : remdup(
+					Variable : L,
+					Variable : Z)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : unionI(
+					Variable : S1,
+					Constant : emptylist,
+					Variable : S1)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : unionI(
+					Constant : emptylist,
+					Variable : S2,
+					Variable : S2)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : unionI(
+					label : listitem(
+					Variable : X,
+					Variable : R),
+					Variable : S2,
+					label : listitem(
+					Variable : X,
+					Variable : Z))
+		Body: 
+			atom : 
+				label : del(
+					Variable : X,
+					Variable : S2,
+					Variable : S3)
+			atom : 
+				label : unionI(
+					Variable : R,
+					Variable : S3,
+					Variable : Z)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : append(
+					Constant : emptylist,
+					Variable : L,
+					Variable : L)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : append(
+					label : listitem(
+					Variable : X,
+					Variable : R),
+					Variable : L,
+					label : listitem(
+					Variable : X,
+					Variable : Z))
+		Body: 
+			atom : 
+				label : append(
+					Variable : R,
+					Variable : L,
+					Variable : Z)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : mapcons(
+					Variable : X,
+					Constant : emptylist,
+					Constant : emptylist)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : mapcons(
+					Variable : X,
+					label : listitem(
+					Variable : Y,
+					Variable : R),
+					label : listitem(
+					label : listitem(
+					Variable : X,
+					Variable : Y),
+					Variable : Z))
+		Body: 
+			atom : 
+				label : mapcons(
+					Variable : X,
+					Variable : R,
+					Variable : Z)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : powerI(
+					Constant : emptylist,
+					label : listitem(
+					Constant : emptylist))
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : powerI(
+					label : listitem(
+					Variable : X,
+					Variable : R),
+					Variable : P)
+		Body: 
+			atom : 
+				label : powerI(
+					Variable : R,
+					Variable : P1)
+			atom : 
+				label : mapcons(
+					Variable : X,
+					Variable : P1,
+					Variable : P2)
+			atom : 
+				label : append(
+					Variable : P2,
+					Variable : P1,
+					Variable : P)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : interI(
+					Variable : S1,
+					Constant : emptylist,
+					Constant : emptylist)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : interI(
+					Constant : emptylist,
+					Variable : S2,
+					Constant : emptylist)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : interI(
+					label : listitem(
+					Variable : X,
+					Variable : L),
+					Variable : S2,
+					label : listitem(
+					Variable : X,
+					Variable : Z))
+		Body: 
+			atom : 
+				label : mem(
+					Variable : X,
+					Variable : S2)
+			atom : 
+				label : interI(
+					Variable : L,
+					Variable : S2,
+					Variable : Z)
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : interI(
+					label : listitem(
+					 _ ,
+					Variable : L),
+					Variable : S2,
+					Variable : Z)
+		Body: 
+			atom : 
+				label : interI(
+					Variable : L,
+					Variable : S2,
+					Variable : Z)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : diffI(
+					Variable : S1,
+					Constant : emptylist,
+					Variable : S1)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : diffI(
+					Constant : emptylist,
+					Variable : S2,
+					Constant : emptylist)
+		Body: 
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : diffI(
+					label : listitem(
+					Variable : X,
+					Variable : L),
+					Variable : S2,
+					label : listitem(
+					Variable : X,
+					Variable : Z))
+		Body: 
+			atom : 
+				label : not(
+					label : mem(
+					Variable : X,
+					Variable : S2))
+			atom : 
+				label : diffI(
+					Variable : L,
+					Variable : S2,
+					Variable : Z)
+			!
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : diffI(
+					label : listitem(
+					 _ ,
+					Variable : L),
+					Variable : S2,
+					Variable : Z)
+		Body: 
+			atom : 
+				label : diffI(
+					Variable : L,
+					Variable : S2,
+					Variable : Z)
+EOF

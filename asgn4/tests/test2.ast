@@ -1,0 +1,41 @@
+Program : 
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : likes(
+					Constant : john,
+					Constant : pizza)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : likes(
+					Constant : mary,
+					Constant : pizza)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : likes(
+					Constant : mary,
+					Constant : sushi)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : likes(
+					Constant : sam,
+					Constant : sushi)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : friend(
+					Variable : X,
+					Variable : Y)
+		Body: 
+			atom : 
+				label : likes(
+					Variable : X,
+					Variable : Z)
+			atom : 
+				label : likes(
+					Variable : Y,
+					Variable : Z)
+EOF

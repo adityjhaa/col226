@@ -1,0 +1,141 @@
+Program : 
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : parent(
+					Constant : john,
+					Constant : mary)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : parent(
+					Constant : john,
+					Constant : tom)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : parent(
+					Constant : mary,
+					Constant : peter)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : parent(
+					Constant : mary,
+					Constant : lisa)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : parent(
+					Constant : susan,
+					Constant : bob)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : parent(
+					Constant : susan,
+					Constant : alice)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : male(
+					Constant : john)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : male(
+					Constant : tom)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : male(
+					Constant : peter)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : male(
+					Constant : bob)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : female(
+					Constant : mary)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : female(
+					Constant : lisa)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : female(
+					Constant : susan)
+	Clause(Fact):
+		Head: 
+			atom : 
+				label : female(
+					Constant : alice)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : ancestor(
+					Variable : X,
+					Variable : Y)
+		Body: 
+			atom : 
+				label : parent(
+					Variable : X,
+					Variable : Y)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : ancestor(
+					Variable : X,
+					Variable : Y)
+		Body: 
+			atom : 
+				label : parent(
+					Variable : X,
+					Variable : Z)
+			atom : 
+				label : ancestor(
+					Variable : Z,
+					Variable : Y)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : sibling(
+					Variable : X,
+					Variable : Y)
+		Body: 
+			atom : 
+				label : parent(
+					Variable : Z,
+					Variable : X)
+			atom : 
+				label : parent(
+					Variable : Z,
+					Variable : Y)
+			atom : 
+				label : <>(
+					Variable : X,
+					Variable : Y)
+	Clause(Rule):
+		Head: 
+			atom : 
+				label : aunt(
+					Variable : X,
+					Variable : Y)
+		Body: 
+			atom : 
+				label : female(
+					Variable : X)
+			atom : 
+				label : sibling(
+					Variable : X,
+					Variable : Z)
+			atom : 
+				label : parent(
+					Variable : Z,
+					Variable : Y)
+EOF
