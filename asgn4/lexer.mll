@@ -28,6 +28,8 @@ rule token = parse
         { GT }
     | ['<']
         { LT }
+    | "<>"
+        { NOT_EQUAL }
     | [',']
         { COMMA }
     | ['!']
