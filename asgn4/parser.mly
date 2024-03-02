@@ -1,5 +1,5 @@
 %{
-    Open Ast;;
+    open Ast;;
 %}
 
 %token <int> INT
@@ -13,7 +13,7 @@
 
 %start program goal
 %type <Ast.program> program
-%type <goal> goal
+%type <Ast.goal> goal
 %%
 
 program:
@@ -27,7 +27,7 @@ clause_list:
     | clause
         { [$1] }
     | clause clause_list
-        { [$1]::$2 }
+        { $1::$2 }
 ;
 
 clause:
@@ -46,7 +46,7 @@ atomic_list:
     | atomic
         { [$1] }
     | atomic COMMA atomic_list
-        { (S1)::S3 }
+        { $1::$3 }
 ;
 
 atomic:
@@ -56,7 +56,7 @@ atomic:
         { Atom($1, $3) }
     | term EQUAL term
         { Atom("=", [$1; $3]) }
-    | term NOT_EQ term
+    | term NOT_EQUAL term
         { Atom("<>", [$1; $3]) }
     | term LT term
         { Atom("<", [$1; $3]) }
