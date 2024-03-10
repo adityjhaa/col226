@@ -87,6 +87,18 @@ let rec subst_tree (t : tree) (sub : substitution) : tree =
   | V x ->
     (try List.assoc x sub with Not_found -> V x)
   | C { node; children } ->
-    C { node; children = List.map (subst_tree sub) children }
+    C { node; children = List.map (fun t -> subst_tree t sub) children }
+;;
+
+let compose_subst(s1 : substitution) (s2 : substitution) : substitution =
+  let sub1x = List.map (fun (x, t) -> 
+    (x, subst_tree t s2)) s1 in
+  let sub2x = List.filter (fun (x, _) -> 
+    not (List.mem_assoc x sub1x)) s2 in
+  sub1x @ sub2x
+;;
+
+let subst (t : tree) (sub : substitution) : tree =
+  subst_tree t sub
 ;;
 
