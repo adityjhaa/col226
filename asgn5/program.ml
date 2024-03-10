@@ -26,5 +26,21 @@ let check_sig (sign : signature ) : bool =
   not (check_dup (List.map fst sign)) && not (check_neg (List.map snd sign)) 
 ;;
 
+let rec get_arity sign x =
+  match sign with
+  | [] -> 0
+  | (a, i)::t -> 
+    if a=x then i 
+    else get_arity t x
+;;
+
+let rec wftree (t: tree) (sign: signature) : bool = 
+  match t with
+  | V _ -> true
+  | C {node = n; children = clist } ->
+    let i = get_arity sign n in
+    List.length clist = i && List.for_all (fun c -> wftree c sign) clist
+;;
+
 
 
