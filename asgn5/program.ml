@@ -1,20 +1,13 @@
 type symbol = string;;
-type arity = int;;
-type signature = (symbol * arity) list;;
+type signature = (symbol * int) list;;
 
 type tree = V of string | C of { node: symbol ; children: tree list };;
 
 let check_sig (sign : signature ) : bool =
-  let rec check_mem x l =
-    match l with
-    | [] -> false
-    | a::t -> if a = x then true 
-      else check_mem x t
-  in
   let rec check_dup l =
     match l with
     | [] -> false
-    | a::t -> if (check_mem a t) then true
+    | a::t -> if (List.mem a t) then true
       else check_dup t
   in
   let rec check_neg l =
@@ -42,5 +35,25 @@ let rec wftree (t: tree) (sign: signature) : bool =
     List.length clist = i && List.for_all (fun c -> wftree c sign) clist
 ;;
 
+let rec ht (t: tree) : int =
+  match t with
+  | V _ -> 0
+  | C {node = n ; children = clist} -> 1 + List.fold_left (fun acc tx -> max acc (ht tx)) 0 clist
+;;
+
+let rec size (t: tree) :int =
+  match t with
+  | V _ -> 1
+  | C {node = n ; children = clist} -> 1 + List.fold_left (fun acc tx -> acc + (size tx)) 0 clist 
+;;
+
+let vars (t: tree) : string list =
+  let rec vars_helper ty acc =
+    match ty with
+    | V x -> x::acc
+    | C {node = n ; children = clist} -> List.fold_left(fun acc tx -> vars_helper tx acc) acc clist
+  in
+    List.sort_uniq compare (vars_helper t [])
+;;
 
 
