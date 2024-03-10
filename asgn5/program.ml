@@ -56,4 +56,10 @@ let vars (t: tree) : string list =
     List.sort_uniq compare (vars_helper t [])
 ;;
 
+let rec mirror (t:tree) :tree =
+  match t with
+  | V x -> V x
+  | C {node = n ; children = clist} -> C {node = n ; children = List.rev (List.map mirror clist)}
+;;
+
 
