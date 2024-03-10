@@ -1,5 +1,5 @@
-type symbol = string;;
-type signature = (symbol * int) list;;
+type symbol = (string * int);;
+type signature = symbol list;;
 
 type tree = V of string | C of { node: symbol ; children: tree list };;
 
@@ -23,11 +23,11 @@ let check_sig (sign : signature ) : bool =
   not (check_dup (List.map fst sign)) && not (check_neg (List.map snd sign)) 
 ;;
 
-let rec get_arity sign x =
+let rec get_arity (sign : signature) (x: symbol) : int =
   match sign with
   | [] -> 0
   | (a, i)::t -> 
-    if a=x then i 
+    if a=(fst x) then i 
     else get_arity t x
 ;;
 
@@ -90,15 +90,24 @@ let rec subst_tree (t : tree) (sub : substitution) : tree =
     C { node; children = List.map (fun t -> subst_tree t sub) children }
 ;;
 
-let compose_subst(s1 : substitution) (s2 : substitution) : substitution =
-  let sub1x = List.map (fun (x, t) -> 
-    (x, subst_tree t s2)) s1 in
-  let sub2x = List.filter (fun (x, _) -> 
-    not (List.mem_assoc x sub1x)) s2 in
-  sub1x @ sub2x
-;;
-
-let subst (t : tree) (sub : substitution) : tree =
+let subst (sub : substitution) (t: tree) : tree =
   subst_tree t sub
 ;;
 
+(* The basic implementation *)
+
+(* let compose_subst (s1:substitution) (s2:substitution) (t:tree) : tree =
+  subst s2 (subst s1 t)
+;; *)
+
+let compose_subst (s1: substitution) (s2: substitution) (t: tree) : tree =
+  let rec helper t =
+    match t with
+    | V x -> 
+      (try List.assoc x s1 with Not_found -> 
+        (try List.assoc x s2 with Not_found -> V x))
+    | C {node; children} -> 
+      C {node; children = List.map helper children}
+  in
+  helper t
+;;
