@@ -3,6 +3,8 @@ type signature = (symbol * int) list;;
 
 type tree = V of string | C of { node: symbol ; children: tree list };;
 
+type substitution = (string * tree) list
+
 let check_sig (sign : signature ) : bool =
   let rec check_dup l =
     match l with
@@ -62,4 +64,23 @@ let rec mirror (t:tree) :tree =
   | C {node = n ; children = clist} -> C {node = n ; children = List.rev (List.map mirror clist)}
 ;;
 
+let rec check_subst (subst: substitution) : bool =
+  let vars = List.map fst subst in
+  let rec check_duplicates s acc =
+    match s with
+    | [] -> true
+    | a::t ->
+        if List.mem a acc then false
+        else check_duplicates t (a::acc)
+  in
+  check_duplicates vars []
+;;
+
+let rec subst_tree (t : tree) (sub : substitution) : tree =
+  match t with
+  | V x ->
+    (try List.assoc x sub with Not_found -> V x)
+  | C { node; children } ->
+    C { node; children = List.map (subst_tree sub) children }
+;;
 
