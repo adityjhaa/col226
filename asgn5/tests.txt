@@ -1,0 +1,74 @@
+
+(* Test cases *)
+
+1.
+let t1 = V "x";;
+let t2 = V "x";;
+
+let m = mgu t1 t2;;
+val m : substitution = [("x", V "x")]
+
+
+2.
+let t1 = V "x";;
+let t2 = V "y";;
+
+let m = mgu t1 t2;;
+val m : substitution = [("x", V "y")]
+
+
+3.
+let t1 = V "x";;
+let t2 = C { node = ("+",2); children = [V "a"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "b"] }] }
+
+let m = mgu t1 t2;;
+val m : substitution = [("x", C {node = ("+", 2); children = [V "a"; C {node = ("*", 2); children = [C {node = ("42", 0); children = []}; V "b"]}]})]
+
+
+4.
+let t1 = V "x";;
+let t2 = C { node = ("+",2); children = [V "a"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "x"] }] }
+
+let m = mgu t1 t2;;
+Exception: NOT_UNIFIABLE.
+
+
+5.
+let t1 = C { node = ("+",2); children = [V "a"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "y"] }] };;
+let t2 = C { node = ("+",2); children = [V "a"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "x"] }] };;
+
+let m = mgu t1 t2;;
+val m : substitution = [("y", V "x"); ("a", V "a")]
+
+
+6.
+let t1 = C { node = ("+",2); children = [V "a"; C { node = ("42", 0); children = []}] };;
+let t2 = C { node = ("+",2); children = [V "a"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "x"] }] };;
+
+let m = mgu t1 t2;;
+Exception: NOT_UNIFIABLE.
+
+
+7.
+let t1 = C { node = ("+",2); children = [V "a"; V "b"] };;
+let t2 = C { node = ("+",2); children = [V "a"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "x"] }] };;
+
+let m = mgu t1 t2;;
+val m : substitution = [("b", C {node = ("*", 2); children = [C {node = ("42", 0); children = []}; V "x"]}); ("a", V "a")]
+
+
+8.
+let t1 = C { node = ("+",2); children = [V "a"; V "b"] };;
+let t2 =  C { node = ("+",2); children = [V "c"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "x"] }] };;
+
+let m = mgu t1 t2;;
+val m : substitution = [("b", C {node = ("*", 2); children = [C {node = ("42", 0); children = []}; V "x"]}); ("a", V "c")]
+
+
+9.
+let t1 =  C { node = ("+",2); children = [V "c"; C { node = ("*",2) ; children = [ C { node = ("41",0); children = [] }; V "x"] }] };;
+let t2 =  C { node = ("+",2); children = [V "c"; C { node = ("*",2) ; children = [ C { node = ("42",0); children = [] }; V "x"] }] };;
+
+let m = mgu t1 t2;;
+Exception: NOT_UNIFIABLE.
+
