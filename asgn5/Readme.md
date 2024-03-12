@@ -25,6 +25,5 @@ with suitable type representations for types *symbol* and *signature*.
 
 8. Provide at least 8 test cases to show that *mgu* works correctly, clearly showing that your examples cover all cases in the analysis.
 
-9. Show that *mgu (t, u) = mgu (mirror u, mirror t)*.
 
 
