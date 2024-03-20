@@ -8,5 +8,6 @@
 - <a href = "https://github.com/adityjha0/col226/tree/main/asgn3">*Assignment 3*</a> : Lexer with Ocamllex
 - <a href = "https://github.com/adityjha0/col226/tree/main/asgn4">*Assignment 4*</a> : Parser with Ocamlyacc
 - <a href = "https://github.com/adityjha0/col226/tree/main/asgn5">*Assignment 5*</a> : Most General Unifier
+- <a href = "https://github.com/adityjha0/col226/tree/main/asgn6">*Assignment 6*</a> : The SECD Machine 
   
 <hr>
