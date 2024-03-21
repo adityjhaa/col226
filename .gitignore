@@ -1,8 +1,6 @@
-asgn3/_build/
-asgn3/main.native
-asgn4/_build/
-asgn4/main.native
-asgn4/base/
-asgn4/usage.txt
+*/_build/
+*/main.native
+*/base*
+*/usage*
 
 
