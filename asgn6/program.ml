@@ -44,27 +44,27 @@ let rec compile (e:exp) =
 let rec stkmc s e c d  : values =
   match (s, c, d) with
     v::_, [ ] , _ -> v
-  | s, (LDN n)::c', _ -> stkmc ((N n)::s) e c' d
-  | s, (LDB b)::c', _ -> stkmc ((B b)::s) e c' d
-  | s, (LOOKUP x)::c', _ -> stkmc ((find (V x) e)::s) e c' d
-  | (N n2)::(N n1)::s', PLUS::c', _ -> stkmc (N(n1+n2)::s') e c' d
-  | (N n2)::(N n1)::s', MINUS::c', _ -> stkmc (N(n1-n2)::s') e c' d
-  | (N n2)::(N n1)::s', TIMES::c', _ -> stkmc (N(n1*n2)::s') e c' d
-  | (B b2)::(B b1)::s', AND::c', _ -> stkmc (B(b1 && b2)::s') e c' d
-  | (B b2)::(B b1)::s', OR::c', _ -> stkmc (B(b1 || b2)::s') e c' d
-  | (B b0)::s', NOT::c', _ -> stkmc (B(not b0)::s') e c' d
-  | (N n2)::(N n1)::s', GT::c', _ -> stkmc (B(n1>n2)::s') e c' d
-  | (N n2)::(N n1)::s', LT::c', _ -> stkmc (B(n1<n2)::s') e c' d
-  | (N n2)::(N n1)::s', EQ::c', _ -> stkmc (B(n1=n2)::s') e c' d
-  | (B true)::s', COND(c1, c2)::c', _ -> stkmc s' e (c1 @ c') d
-  | (B false)::s', COND(c1, c2)::c', _ -> stkmc s' e (c2 @ c') d
-  | v1::v2::s', PAIR::c', _ -> stkmc (P(v1, v2)::s') e c' d
-  | (P(v1, _))::s', FST::c', _ -> stkmc (v1::s') e c' d
-  | (P(_, v2))::s', SND::c', _ -> stkmc (v2::s') e c' d
-  | s, MKCLOS(x, c')::c0, _ -> stkmc (Clos(V x, c', e)::s) e c0 d
-  | v::Clos(V x, c', e')::s, APP::c0, d -> stkmc [] ((V x, v)::e') c' ((s, e, c0)::d)
-  | v::s', RET::c', (s, e, c0)::d -> stkmc (v::s) e c0 d
-  | _, _, _ -> raise (Stuck (s, e, c, d))
+  | s, (LDN n)::c', _                    -> stkmc ((N n)::s) e c' d
+  | s, (LDB b)::c', _                    -> stkmc ((B b)::s) e c' d
+  | s, (LOOKUP x)::c', _                 -> stkmc ((find (V x) e)::s) e c' d
+  | (N n2)::(N n1)::s', PLUS::c', _      -> stkmc (N(n1+n2)::s') e c' d
+  | (N n2)::(N n1)::s', MINUS::c', _     -> stkmc (N(n1-n2)::s') e c' d
+  | (N n2)::(N n1)::s', TIMES::c', _     -> stkmc (N(n1*n2)::s') e c' d
+  | (B b2)::(B b1)::s', AND::c', _       -> stkmc (B(b1 && b2)::s') e c' d
+  | (B b2)::(B b1)::s', OR::c', _        -> stkmc (B(b1 || b2)::s') e c' d
+  | (B b0)::s', NOT::c', _               -> stkmc (B(not b0)::s') e c' d
+  | (N n2)::(N n1)::s', GT::c', _        -> stkmc (B(n1>n2)::s') e c' d
+  | (N n2)::(N n1)::s', LT::c', _        -> stkmc (B(n1<n2)::s') e c' d
+  | (N n2)::(N n1)::s', EQ::c', _        -> stkmc (B(n1=n2)::s') e c' d
+  | (B true)::s', COND(c1, c2)::c', _    -> stkmc s' e (c1 @ c') d
+  | (B false)::s', COND(c1, c2)::c', _   -> stkmc s' e (c2 @ c') d
+  | v1::v2::s', PAIR::c', _              -> stkmc (P(v1, v2)::s') e c' d
+  | (P(v1, _))::s', FST::c', _           -> stkmc (v1::s') e c' d
+  | (P(_, v2))::s', SND::c', _           -> stkmc (v2::s') e c' d
+  | s, MKCLOS(x, c')::c0, _              -> stkmc (Clos(V x, c', e)::s) e c0 d
+  | v::Clos(V x, c', e')::s, APP::c0, d  -> stkmc [] ((V x, v)::e') c' ((s, e, c0)::d)
+  | v::s', RET::c', (s, e, c0)::d        -> stkmc (v::s) e c0 d
+  | _, _, _                              -> raise (Stuck (s, e, c, d))
 ;;
 
 let secd (exp:exp) (e:environment) : values = 
