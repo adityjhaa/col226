@@ -4,7 +4,7 @@ type exp = Num of int | Bl of bool | V of string | Plus of exp * exp | Minus of 
 
 type opcode = LDN of int | LDB of bool | LOOKUP of string | PLUS | TIMES | MINUS | AND | OR | NOT | GT | LT | EQ | COND of opcode list * opcode list | PAIR | FST | SND | APP | MKCLOS of string * (opcode list) | RET;;
 
-type values = N of int | B of bool | P of values * values | Clos of variable * exp * environment
+type values = N of int | B of bool | P of values * values | Clos of variable * code * environment
 and stack = values list
 and environment = (variable * values) list
 and code = opcode list
@@ -61,5 +61,12 @@ let rec stkmc s e c d  : values =
   | v1::v2::s', PAIR::c', _ -> stkmc (P(v1, v2)::s') e c' d
   | (P(v1, _))::s', FST::c', _ -> stkmc (v1::s') e c' d
   | (P(_, v2))::s', SND::c', _ -> stkmc (v2::s') e c' d
+  | s, MKCLOS(x, c')::c0, _ -> stkmc (Clos(V x, c', e)::s) e c0 d
+  | v::Clos(V x, c', e')::s, APP::c0, d -> stkmc [] ((V x, v)::e') c' ((s, e, c0)::d)
+  | v::s', RET::c', (s, e, c0)::d -> stkmc (v::s) e c0 d
   | _, _, _ -> raise (Stuck (s, e, c, d))
+;;
+
+let secd (exp:exp) (e:environment) : values = 
+  stkmc [] e (compile exp) []
 ;;
