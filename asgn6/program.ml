@@ -11,7 +11,7 @@ and code = opcode list
 and dump = (stack * environment * code) list;;
 
 exception Var_not_in_scope of variable;;
-exception Stuck;;
+exception Stuck of stack * environment * code * dump;;
 
 let rec find v (e:environment) = 
   match e with
@@ -21,9 +21,9 @@ let rec find v (e:environment) =
 
 let rec compile (e:exp) = 
   match e with
-    Num n             -> [LDN(n)]
-  | Bl b              -> [LDB(b)]
-  | V x               -> [LOOKUP(x)]
+    Num n             -> [LDN n]
+  | Bl b              -> [LDB b]
+  | V x               -> [LOOKUP x]
   | Plus(e1, e2)      -> (compile e1) @ (compile e2) @ [PLUS]
   | Minus(e1, e2)     -> (compile e1) @ (compile e2) @ [MINUS]
   | Times(e1, e2)     -> (compile e1) @ (compile e2) @ [TIMES]
@@ -41,3 +41,25 @@ let rec compile (e:exp) =
   | App(e1, e2)       -> (compile e1) @ (compile e2) @ [APP] 
 ;;
 
+let rec stkmc s e c d  : values =
+  match (s, c, d) with
+    v::_, [ ] , _ -> v
+  | s, (LDN n)::c', _ -> stkmc ((N n)::s) e c' d
+  | s, (LDB b)::c', _ -> stkmc ((B b)::s) e c' d
+  | s, (LOOKUP x)::c', _ -> stkmc ((find (V x) e)::s) e c' d
+  | (N n2)::(N n1)::s', PLUS::c', _ -> stkmc (N(n1+n2)::s') e c' d
+  | (N n2)::(N n1)::s', MINUS::c', _ -> stkmc (N(n1-n2)::s') e c' d
+  | (N n2)::(N n1)::s', TIMES::c', _ -> stkmc (N(n1*n2)::s') e c' d
+  | (B b2)::(B b1)::s', AND::c', _ -> stkmc (B(b1 && b2)::s') e c' d
+  | (B b2)::(B b1)::s', OR::c', _ -> stkmc (B(b1 || b2)::s') e c' d
+  | (B b0)::s', NOT::c', _ -> stkmc (B(not b0)::s') e c' d
+  | (N n2)::(N n1)::s', GT::c', _ -> stkmc (B(n1>n2)::s') e c' d
+  | (N n2)::(N n1)::s', LT::c', _ -> stkmc (B(n1<n2)::s') e c' d
+  | (N n2)::(N n1)::s', EQ::c', _ -> stkmc (B(n1=n2)::s') e c' d
+  | (B true)::s', COND(c1, c2)::c', _ -> stkmc s' e (c1 @ c') d
+  | (B false)::s', COND(c1, c2)::c', _ -> stkmc s' e (c2 @ c') d
+  | v1::v2::s', PAIR::c', _ -> stkmc (P(v1, v2)::s') e c' d
+  | (P(v1, _))::s', FST::c', _ -> stkmc (v1::s') e c' d
+  | (P(_, v2))::s', SND::c', _ -> stkmc (v2::s') e c' d
+  | _, _, _ -> raise (Stuck (s, e, c, d))
+;;
