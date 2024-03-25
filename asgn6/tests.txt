@@ -1,0 +1,75 @@
+Test Cases
+
+1.
+let e1 = Plus(Num 5, Num 3);;
+(* val e1 : exp = Plus (Num 5, Num 3) *)
+
+secd e1 [];;
+(* - : values = N 8 *)
+
+2.
+let e2 = Or(Bl true, Bl false);;
+(* val e2 : exp = Or (Bl true, Bl false) *)
+
+secd e2 [];;
+(* - : values = B true *)
+
+3.
+let e3 = Not(Num 12);;
+(* val e3 : exp = Not (Num 12) *)
+
+secd e3 [];;
+(* Exception: Stuck ([N 12], [], [NOT], []). *)
+
+4.
+et e4 = Eq (Num 7, Plus(Num 2, Num 5));;
+(* val e4 : exp = Eq (Num 7, Plus (Num 2, Num 5)) *)
+
+secd e4 [];;
+(* - : values = B true *)
+
+5.
+let e5 = IfTE(Gt(Num 20, Num 25), Minus(Num 20, Num 25), Minus(Num 25, Num 20));;
+(* val e5 : exp = IfTE (Gt (Num 20, Num 25), Minus (Num 20, Num 25), Minus (Num 25, Num 20)) *)
+
+secd e5 [];;
+(* - : values = N 5 *)
+
+6.
+let e6 = IfTE(Gt(V "x", V "x"), Minus(V "x", V "y"), Minus(V "y", V "x"));;
+(* val e6 : exp = IfTE (Gt (V "x", V "x"), Minus (V "x", V "y"), Minus (V "y", V "x")) *)
+let env = [(V "x", N 20); (V "y", N 25)];;
+(* val env : environment = [(V "x", N 20); (V "y", N 25)] *)
+
+secd e6 env;;
+(* - : values = N 5 *)
+
+7.
+let p = Pair(V "a", V "b");;
+(* val p : exp = Pair (V "a", V "b") *)
+let e7 = IfTE(Lt(V "a", Num 25), Fst(p), Snd(p));;
+(* val e7 : exp = IfTE (Lt (V "a", Num 25), Fst (Pair (V "a", V "b")), Snd (Pair (V "a", V "b"))) *)
+let env = [(V "x" , N 20); (V "a" , N 15); (V "b", B false)];;
+(* val env : environment = [(V "x", N 20); (V "a", N 15); (V "b", B false)] *)
+
+secd e7 env;;
+(* - : values = B false *)
+
+8.
+secd (App(Abs("x", Times(V "x", V "a")), Plus(Num 4, Num 1))) [(V "a", N 8)];;
+(* - : values = N 40 *)
+
+9.
+let fn = secd (Abs("x", Plus( V "x", V "y"))) [V "y", N 2];;
+(* val fn : values = Clos (V "x", [LOOKUP "x"; LOOKUP "y"; PLUS; RET], [(V "y", N 2)]) *)
+
+secd (App(V "f", V "y")) [(V "f", fn) ; (V "y", N 8)];;
+(* - : values = N 10 *)
+
+10.
+let sqr = secd (Abs("x", Times(V "x", V "x"))) [];;
+(* val sqr : values = Clos (V "x", [LOOKUP "x"; LOOKUP "x"; TIMES; RET], []) *)
+
+secd (App(V "sq", Num 20)) [V "sq", sqr];;
+(* - : values = N 400 *)
+
