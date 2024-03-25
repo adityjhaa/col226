@@ -13,13 +13,13 @@ and dump = (stack * environment * code) list;;
 exception Var_not_in_scope of variable;;
 exception Stuck of stack * environment * code * dump;;
 
-let rec find v (e:environment) = 
+let rec find (v:variable) (e:environment) : values = 
   match e with
     [] -> raise (Var_not_in_scope v)
   | (x, y)::t -> if v = x then y else find v t
 ;;
 
-let rec compile (e:exp) = 
+let rec compile (e:exp) : code = 
   match e with
     Num n             -> [LDN n]
   | Bl b              -> [LDB b]
@@ -41,7 +41,7 @@ let rec compile (e:exp) =
   | App(e1, e2)       -> (compile e1) @ (compile e2) @ [APP] 
 ;;
 
-let rec stkmc s e c d  : values =
+let rec stkmc (s:stack) (e:environment) (c:code) (d:dump)  : values =
   match (s, c, d) with
     v::_, [ ] , _ -> v
   | s, (LDN n)::c', _                    -> stkmc ((N n)::s) e c' d
