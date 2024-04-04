@@ -9,5 +9,6 @@
 - <a href = "https://github.com/adityjha0/col226/tree/main/asgn4">*Assignment 4*</a> : Parser with Ocamlyacc
 - <a href = "https://github.com/adityjha0/col226/tree/main/asgn5">*Assignment 5*</a> : Most General Unifier
 - <a href = "https://github.com/adityjha0/col226/tree/main/asgn6">*Assignment 6*</a> : The SECD Machine 
+- <a href = "https://github.com/adityjha0/col226/tree/main/asgn7">*Assignment 7*</a> : The Krivine Machine 
   
 <hr>
