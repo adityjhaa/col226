@@ -102,12 +102,12 @@ ifte (c:closure) : bool =
 and
 fst' (c0:closure) : exp =
   match c0 with
-  | Clos(Pair(e1, e2), _) -> let Clos(e, a) = eval (Clos(e1, [])) [] in e
+  | Clos(Pair(e1, e2), t) -> let Clos(e, a) = eval (Clos(e1, t)) [] in e
   | _ -> raise ExpressionError
 and
 snd' (c0:closure) : exp =
   match c0 with
-  | Clos(Pair(e1, e2), _) -> let Clos(e, a) = eval (Clos(e2, [])) [] in e
+  | Clos(Pair(e1, e2), t) -> let Clos(e, a) = eval (Clos(e2, t)) [] in e
   | _ -> raise ExpressionError
 ;;
 
