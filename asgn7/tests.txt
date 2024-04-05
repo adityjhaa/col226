@@ -1,0 +1,161 @@
+Test cases
+
+0.
+let e0 = Num 42;;
+(* val e0 : exp = Num 42 *)
+
+krivine e0 [];;
+(* - : values = N 42 *)
+
+1.
+let e1 = Bl true;;
+(* val e1 : exp = Bl true *)
+
+krivine e1 [];;
+(* - : values = B true *)
+
+2.
+let e2 = V "a";;
+(* val e2 : exp = V "a" *)
+
+(a).
+krivine e2 [(V "a" , Clos(Num 1, []))];;
+(* - : values = N 1 *)
+(b).
+krivine e2 [(V "b" , Clos(Num 1, []))];;
+(* Exception: Var_not_in_scope (V "a"). *)
+
+3.
+let e3 = Plus(Num 10, Num 15);;
+(* val e3 : exp = Plus (Num 10, Num 15) *)
+
+krivine e3 [];;
+(* - : values = N 25 *)
+
+4.
+let e4 = And(Bl true, Bl false);;
+(* val e4 : exp = And (Bl true, Bl false) *)
+
+krivine e4 [];;
+(* - : values = B false *)
+
+5.
+let e5 = Gt(Num 30, Num 50);;
+(* val e5 : exp = Gt (Num 30, Num 50) *)
+
+krivine e5 [];;
+(* - : values = B false *)
+
+6.
+let e6 = Eq(Num 10, Bl true);;
+(* val e6 : exp = Eq (Num 10, Bl true) *)
+
+krivine e6 [];;
+(* Exception: ExpressionError. *)
+
+7.
+let e7 = IfTE(Gt(Num 15, Num 10), Bl true, Bl false);; 
+(* val e7 : exp = IfTE (Gt (Num 15, Num 10), Bl true, Bl false) *)
+
+krivine e7 [];;
+(* - : values = B true *)
+
+8.
+let e8 = IfTE(Eq(V "a", V "b"), Div(V "a", V "b"), Div(V "b", V "a"));;
+(* val e8 : exp = IfTE (Eq (V "a", V "b"), Div (V "a", V "b"), Div (V "b", V "a")) *)
+
+(a).
+krivine e8 [(V "a", Clos(Num 0, [])); (V "b", Clos(Num 2, []))];;
+(* Exception: Division_by_zero. *)
+(b).
+krivine e8 [(V "a", Clos(Num 2, [])); (V "b", Clos(Num 0, []))];;
+(* - : values = N 0 *)
+
+9.
+let e9 = Pair(e4, e5);;
+(* val e9 : exp = Pair (And (Bl true, Bl false), Gt (Num 30, Num 50)) *)
+
+krivine e9 [];;
+(* - : values = P (B false, B false) *)
+
+10.
+let e10 = Pair(e8, e9);;
+(* val e10 : exp =
+  Pair (IfTE (Eq (V "a", V "b"), Div (V "a", V "b"), Div (V "b", V "a")),
+        Pair (And (Bl true, Bl false), Gt (Num 30, Num 50))) *)
+
+(a).
+let f = Fst(e10);;
+(* val f : exp =
+  Fst
+   (Pair (IfTE (Eq (V "a", V "b"), Div (V "a", V "b"), Div (V "b", V "a")),
+          Pair (And (Bl true, Bl false), Gt (Num 30, Num 50)))) *)
+
+krivine f [(V "a", Clos(Num 0, [])); (V "b", Clos(Num 2, []))];;
+(* Exception: Division_by_zero. *)
+
+(b).
+let s = Snd(e10);;
+(* val s : exp =
+  Snd
+   (Pair (IfTE (Eq (V "a", V "b"), Div (V "a", V "b"), Div (V "b", V "a")),
+          Pair (And (Bl true, Bl false), Gt (Num 30, Num 50)))) *)
+
+krivine s [(V "a", Clos(Num 0, [])); (V "b", Clos(Num 2, []))];;
+(* - : values = P (B false, B false) *)
+
+11.
+let e11 = App(Abs("x" , Plus(V "x", Num 5)), Plus(Num 2, Num 3));;
+(* val e11 : exp = App (Abs ("x", Plus (V "x", Num 5)), Plus (Num 2, Num 3)) *)
+
+krivine e11 [];;
+(* - : values = N 10 *)
+
+12.
+let fn = Abs("x", Plus(Num 2, Num 3));;
+(* val fn : exp = Abs ("x", Plus (Num 2, Num 3)) *)
+
+krivine fn [];;
+(* - : values = VClos (V "x", Plus (Num 2, Num 3), []) *)
+
+13.
+(a).
+let e = App(V "fn", Num 10);;
+(* val e : exp = App (V "fn", Num 10) *)
+
+krivine e [(V "fn", Clos(fn, []))];;
+(* - : values = N 5 *)
+
+(b).
+let e = App(V "fn", Div(Num 10, Num 0));; (* arguement is undefined *)
+(* val e : exp = App (V "fn", Div (Num 10, Num 0)) *)
+
+krivine e [(V "fn", Clos(fn, []))];;
+(* - : values = N 5 *)
+
+14.
+let sq = Abs("x", Times(V "x", V "x"));;
+(* val sq : exp = Abs ("x", Times (V "x", V "x")) *)
+
+let e = App(V "sq", Num 12);;
+(* val e : exp = App (V "sq", Num 12) *)
+
+krivine e [(V "sq", Clos(sq, []))];;
+(* - : values = N 144 *)
+
+15.
+let mulbyo = Abs("x", Times(V "x", V "o"));;
+(* val mulbyo : exp = Abs ("x", Times (V "x", V "o")) *)
+
+let t = [V "o" , Clos(Num 10, [])];;
+(* val t : table = [(V "o", Clos (Num 10, []))] *)
+
+krivine mulbyo t;;
+(* - : values = VClos (V "x", Times (V "x", V "o"), [(V "o", Clos (Num 10, []))]) *)
+
+let e = App(V "m", Num 5);;
+(* val e : exp = App (V "m", Num 5) *)
+
+krivine e [V "m", Clos(mulbyo, t)];;
+(* - : values = N 50 *)
+
