@@ -10,5 +10,6 @@
 - <a href = "https://github.com/adityjhaa/col226/tree/main/asgn5">*Assignment 5*</a> : Most General Unifier
 - <a href = "https://github.com/adityjhaa/col226/tree/main/asgn6">*Assignment 6*</a> : The SECD Machine 
 - <a href = "https://github.com/adityjhaa/col226/tree/main/asgn7">*Assignment 7*</a> : The Krivine Machine 
+- <a href = "https://github.com/adityjhaa/col226/tree/main/asgn8">*Assignment 8*</a> : A Prolog Enterpreter 
   
 <hr>
