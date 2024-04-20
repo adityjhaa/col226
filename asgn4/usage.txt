@@ -1,0 +1,10 @@
+
+Build:
+make
+
+Run:
+./main.native <input_file>
+
+(*I am using .mol for "my object language"*)
+
+
