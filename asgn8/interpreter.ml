@@ -15,7 +15,6 @@ type program = clause list;;
 type goal = Goal of atomic list;; 
 type substitution = (variable * term) list;;
 
-
 (* exceptions *)
 
 exception NOT_UNIFIABLE;;
@@ -37,12 +36,6 @@ let rec union l1 l2 =
   | h::tl -> if (mem h l2) then (union tl l2) else h::(union tl l2)
 ;;
 
-let rec make_pairlist l1 l2 = 
-  match l1 with
-    [] -> []
-  | h::t -> (h, (hd l2))::(make_pairlist t (tl l2))
-;;
-
 let print_bool b =
   if(b) then print_string ("true.\n")
   else print_string ("false.\n")
@@ -55,18 +48,6 @@ let rec occur_check (v : variable) (t : term) : bool =
   | _ -> false
 ;;
 
-let rec substitute (s:substitution) (t:term) : term = 
-  match t with
-  | Var v -> 
-    (try assoc v s with NOT_FOUND -> Var v)
-  | Node (n , clist) ->
-    Node (n, map (substitute s) clist)
-  | _ -> t
-;;
-
-let substitute_atom (s:substitution) (Atom(sym, ls) : atomic) : atomic =
-  Atom(sym, map (substitute s) ls);;
-
 let rec vars_from_term (t : term) : (variable list) = 
   match t with
     Var(v) -> [v]
@@ -76,10 +57,26 @@ let rec vars_from_term (t : term) : (variable list) =
 
 let vars_from_atom (Atom(sym, ls) : atomic) : (variable list) = 
   vars_from_term (Node(sym, ls));;
-
-let rec vars_from_goal (Goal(g) : goal) : (variable list) = 
-  fold_left union [] (map vars_from_atom g);;
-
+  
+  let rec vars_from_goal (Goal(g) : goal) : (variable list) = 
+    fold_left union [] (map vars_from_atom g);;
+  
+  let rec substitute (s:substitution) (t:term) : term = 
+    match t with
+    | Var v -> (
+      match s with
+        [] -> t
+      | s'::sl -> if (fst s') = v then snd s' else substitute sl t 
+      )
+    | Node (n , clist) ->
+      Node (n, map (substitute s) clist)
+    | _ -> t
+  ;;
+  
+  let substitute_atom (s:substitution) (Atom(sym, ls) : atomic) : atomic =
+    Atom(sym, map (substitute s) ls)
+  ;;
+    
 let rec compose_subst (s1: substitution) (s2: substitution) : substitution =
   let rec compose_helper acc = function
   | [] -> acc
@@ -94,7 +91,7 @@ let rec compose_subst (s1: substitution) (s2: substitution) : substitution =
 let rec mgu_of_term (t:term) (u:term) : substitution =
   match t, u with
   | Var x, Var y ->
-    if x=y then [(x, Var x)]
+    if x=y then []
     else [(x, Var y)]
   | Var x, Node(s, ls) ->
     if occur_check x u then raise NOT_UNIFIABLE
@@ -102,6 +99,12 @@ let rec mgu_of_term (t:term) (u:term) : substitution =
   | Node(s, ls), Var x ->
     if occur_check x t then raise NOT_UNIFIABLE
     else [(x, t)]
+  | (Num(n1), Num(n2)) -> 
+    if n1=n2 then [] 
+    else raise NOT_UNIFIABLE
+  | (Num(_), Var(x)) -> [(x, t)]
+  | (Var(x), Num(_)) -> [(x, u)]
+  | (Under, _) | (_, Under) -> []
   | Node(s1, ls1) , Node(s2, ls2) when s1 = s2 ->
     let rec helper sub c1 c2 =
       match c1, c2 with
@@ -154,7 +157,20 @@ and print_term (t:term) : unit =
     print_list l;
     print_string (" ) ");
   | Num(n) -> print_string ( " " ^ (string_of_int n) ^ " ")
-  | Under -> print_string ("_")
+  | Under -> print_string (" _ ")
+;;
+
+let rec print_solution (sub : substitution) : unit = 
+  match sub with
+  [] -> print_string ("true. ")
+  | [(v, t)] ->
+    print_string (v ^ " = ");
+    print_term t;
+  | (v, t)::tl -> 
+    print_string (v ^ " = ");
+    print_term t;
+    print_string (", ");
+    print_solution tl;
 ;;
 
 (* program validating function *)
@@ -167,6 +183,8 @@ let rec validate_program (p : program) : bool =
       Atom(("=", _), _) | Atom(("<>", _), _) | Atom(("!", _), _) | Atom((">", _), _) | Atom(("<", _), _) -> raise INVALID_PROGRAM
     | _ -> validate_program xl
 ;;
+
+(* processing the program attributes *)
 
 let rec process_term (t : term) : term = 
   match t with
@@ -201,6 +219,15 @@ let rec process_program (p : program) (Atom(sym ,l) : atomic) : program =
         if sym = sym' then (process_clause c)::(process_program clist (Atom(sym, []))) else c::(process_program clist (Atom(sym, [])))
 ;;
 
+let extractchar () : char = 
+  let stdin_channel = Unix.in_channel_of_descr Unix.stdin in
+  let old_flags = Unix.tcgetattr Unix.stdin in
+  let () = Unix.tcsetattr Unix.stdin Unix.TCSADRAIN { old_flags with Unix.c_icanon = false } in
+  let res = input_char stdin_channel in
+  Unix.tcsetattr Unix.stdin Unix.TCSADRAIN old_flags;
+  res
+;;
+
 let rec bind (sub : substitution) (v : variable list) =
   match v with
     [] -> []
@@ -215,75 +242,53 @@ let rec bind (sub : substitution) (v : variable list) =
     with NOT_FOUND -> (bind sub tl)
 ;;
 
-let rec print_solution (sub : substitution) : unit = 
-  match sub with
-    [] -> print_string ("true. ")
-  | [(v, t)] ->
-    print_string (v ^ " = ");
-    print_term t;
-  | (v, t)::tl -> 
-    print_string (v ^ " = ");
-    print_term t;
-    print_string (", ");
-    print_solution tl;
-;;
-
-let extract () : char = 
-  let stdin_channel = Unix.in_channel_of_descr Unix.stdin in
-  let old_flags = Unix.tcgetattr Unix.stdin in
-  let () = Unix.tcsetattr Unix.stdin Unix.TCSADRAIN { old_flags with Unix.c_icanon = false } in
-  let res = input_char stdin_channel in
-  Unix.tcsetattr Unix.stdin Unix.TCSADRAIN old_flags;
-  res
+let bind_terms (t1 : term) (t2 : term) (sub : substitution) : substitution =
+  compose_subst sub (mgu_of_term (substitute sub t1) (substitute sub t2))
 ;;
 
 let bind_atomics (a1 : atomic) (a2 : atomic) (sub : substitution) : substitution = 
   compose_subst sub (mgu_of_atom (substitute_atom sub a1) (substitute_atom sub a2))
 ;;
 
-let bind_terms (t1 : term) (t2 : term) (sub : substitution) : substitution =
-  compose_subst sub (mgu_of_term (substitute sub t1) (substitute sub t2))
-;;
-
-let rec refine_term (t : term) : term =
+let rec eval_terms (t : term) : term =
   match t with
   | Num(_) -> t
   | Node(("+", 2), [t1; t2]) -> (
-      match ((refine_term t1), (refine_term t2)) with
+      match ((eval_terms t1), (eval_terms t2)) with
       (Num(n1), Num(n2)) -> Num(n1 + n2)
     | _ -> raise NOT_UNIFIABLE
     )
   | Node(("-", 2), [t1; t2]) -> (
-      match ((refine_term t1), (refine_term t2)) with
+      match ((eval_terms t1), (eval_terms t2)) with
       (Num(n1), Num(n2)) -> Num(n1 - n2)
     | _ -> raise NOT_UNIFIABLE
     )
   | Node(("*", 2), [t1; t2]) -> (
-      match ((refine_term t1), (refine_term t2)) with
+      match ((eval_terms t1), (eval_terms t2)) with
       (Num(n1), Num(n2)) -> Num(n1 * n2)
     | _ -> raise NOT_UNIFIABLE
     )
   | Node(("/", 2), [t1; t2]) -> (
-      match ((refine_term t1), (refine_term t2)) with
+      match ((eval_terms t1), (eval_terms t2)) with
       (Num(n1), Num(n2)) -> Num(n1 / n2)
     | _ -> raise NOT_UNIFIABLE
     )
   | _ -> t
 ;;
         
-let atomic_consraint (a : atomic) (sub : substitution) : substitution =
+let eval_atoms (a : atomic) (sub : substitution) : substitution =
   match a with
     Atom(("=", 2), [t1; t2])
   | Atom(("<>", 2), [t1; t2]) -> 
-    compose_subst sub (mgu_of_term (refine_term (substitute sub t1)) (refine_term (substitute sub t2)))
+    compose_subst sub (mgu_of_term (eval_terms (substitute sub t1)) (eval_terms (substitute sub t2)))
   | Atom((">", 2), [t1; t2]) -> (
-    match (refine_term (substitute sub t1), refine_term (substitute sub t2)) with
+    match (eval_terms (substitute sub t1), eval_terms (substitute sub t2)) with
       (Num(n1), Num(n2)) -> if n1 > n2 then sub 
     else raise NOT_UNIFIABLE
     | _ -> raise NOT_UNIFIABLE
   )
   | Atom(("<", 2), [t1; t2]) -> (
-    match (refine_term (substitute sub t1), refine_term (substitute sub t2)) with
+    match (eval_terms (substitute sub t1), eval_terms (substitute sub t2)) with
       (Num(n1), Num(n2)) -> if n1 < n2 then sub 
     else raise NOT_UNIFIABLE
     | _ -> raise NOT_UNIFIABLE
@@ -291,19 +296,19 @@ let atomic_consraint (a : atomic) (sub : substitution) : substitution =
   | _ -> sub
 ;;
 
-let rec evaluate (p : program) (g : goal) (sub : substitution) (v : variable list) : (bool * substitution) = 
+let rec eval_goal (p : program) (g : goal) (sub : substitution) (v : variable list) : (bool * substitution) = 
   match g with
   | Goal([]) -> (
     print_solution (bind sub v);
     flush stdout;
-    let c = ref (extract ()) in
+    let c = ref (extractchar ()) in
     while (!c <> '.' && !c <> ';') do
       print_string ("\nInvalid Action : ");
       print_char(!c);
       print_string ("\nAction? ");
       print_string ("");
       flush stdout;
-      c := extract ();
+      c := extractchar ();
     done;
     print_string("\n");
     if !c = '.' then (true, [])
@@ -312,14 +317,14 @@ let rec evaluate (p : program) (g : goal) (sub : substitution) (v : variable lis
   | Goal(at::atlist) ->
     match at with
       Atom(("=", 2), _) | Atom((">", 2), _) | Atom(("<", 2), _) -> (
-        try evaluate p (Goal(atlist)) (atomic_consraint at sub) v with
+        try eval_goal p (Goal(atlist)) (eval_atoms at sub) v with
         NOT_UNIFIABLE -> (false, []) 
       )
     | Atom(("<>", 2), _) -> (
-      try (false, atomic_consraint at sub) with
-      NOT_UNIFIABLE -> evaluate p (Goal(atlist)) sub v
+      try (false, eval_atoms at sub) with
+      NOT_UNIFIABLE -> eval_goal p (Goal(atlist)) sub v
     )
-    | Atom(("!", 0), _) -> let _ = evaluate p (Goal(atlist)) sub v in (true, [])
+    | Atom(("!", 0), _) -> let _ = eval_goal p (Goal(atlist)) sub v in (true, [])
     | _ ->
       let temp = process_program p at in
       let rec iter p' = match p' with
@@ -328,7 +333,7 @@ let rec evaluate (p : program) (g : goal) (sub : substitution) (v : variable lis
           Fact(Head(a)) -> (
             try
               let u = (bind_atomics a at sub) in
-              match (evaluate temp (Goal(atlist)) u v) with
+              match (eval_goal temp (Goal(atlist)) u v) with
                 (true, u') -> (true, u')
               | _ -> iter clist
               with NOT_UNIFIABLE -> iter clist
@@ -336,7 +341,7 @@ let rec evaluate (p : program) (g : goal) (sub : substitution) (v : variable lis
         | Rule(Head(hd), Body(bd)) -> (
             try 
               let u = (bind_atomics hd at sub) in
-              match (evaluate temp (Goal(bd @ atlist)) u v) with
+              match (eval_goal temp (Goal(bd @ atlist)) u v) with
                 (true, u') -> (true, u')
               | _ -> iter clist
             with NOT_UNIFIABLE -> iter clist
@@ -344,6 +349,6 @@ let rec evaluate (p : program) (g : goal) (sub : substitution) (v : variable lis
       in iter p
 ;;
 
-let interpret_goal (p : program) (g : goal) = 
-  evaluate p g [] (vars_from_goal g)
+let interpret (p : program) (g : goal) = 
+  eval_goal p g [] (vars_from_goal g)
 ;;

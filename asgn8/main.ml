@@ -2,6 +2,8 @@ open Lexer;;
 open Parser;;
 open Interpreter;;
 
+(* System Checks *)
+
 if Array.length Sys.argv < 2 then begin
   print_string ("Error!\nNo input file. Exiting ...\n");
   exit 0;
@@ -27,9 +29,9 @@ try
     if line = "halt." then exit 0
     else try
       let goal = Parser.goal Lexer.tokenize (Lexing.from_string line) in
-      let (b, _) = (interpret_goal program goal)
+      let (b, _) = (interpret program goal)
       in print_bool(b)
     with err -> print_string((Printexc.to_string err) ^ "\n")
   done
 
-with _ -> print_string ("\nInterrupted!\n")
+with _ -> print_string ("\nEnding interpreter!\n")
