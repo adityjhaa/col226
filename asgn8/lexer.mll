@@ -24,7 +24,9 @@ rule tokenize = parse
         { CUT }
     | ['|']
         { PIPE }
-    | "\+"
+    | ['_']
+        { UNDERLINE }
+    | "not"
         { NOT }
     | ['=']
         { EQ }
@@ -61,14 +63,13 @@ and line_comment = parse
       eof 
         { EOF }
     | ['\n']
-        { token lexbuf }
+        { tokenize lexbuf }
     | _ { line_comment lexbuf }
 
 and all_comment = parse
       eof
         { failwith "Syntax error : /* not closed with */" }
     | "*/"
-        { token lexbuf }
+        { tokenize lexbuf }
     | _
         { all_comment lexbuf }
-;

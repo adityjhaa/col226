@@ -4,7 +4,7 @@
 
 %token <int> INT
 %token <string> VAR CONST
-%token LPAREN RPAREN LBRACKET RBRAKET COMMA DOT COND CUT PIPE NOT EQ N_EQ PLUS MINUS TIMES DIV GT LT EOF
+%token LPAREN RPAREN LBRACKET RBRACKET COMMA DOT COND CUT PIPE UNDERLINE NOT EQ N_EQ PLUS MINUS TIMES DIV GT LT EOF
 
 %left COMMA
 %nonassoc PIPE EQ GT LT
@@ -39,7 +39,7 @@ clause:
 ;
 
 goal:
-    | atomic_list ENDL
+    | atomic_list DOT
         { Goal($1) }
 ;
 
@@ -52,65 +52,67 @@ atomic_list:
 
 atomic:
     | CONST
-        { Atom($1, []) }
+        { Atom(($1, 0), []) }
     | CONST LPAREN term_list RPAREN
-        { Atom($1, $3) }
+        { Atom(($1, 1), $3) }
     | term EQ term
-        { Atom("=", [$1; $3]) }
+        { Atom(("=", 2), [$1; $3]) }
     | term N_EQ term
-        { Atom("<>", [$1; $3]) }
+        { Atom(("<>", 2), [$1; $3]) }
     | term LT term
-        { Atom("<", [$1; $3]) }
+        { Atom(("<", 2), [$1; $3]) }
     | term GT term
-        { Atom(">", [$1; $3]) }
+        { Atom((">", 2), [$1; $3]) }
     | NOT term
-        { Atom("not", [$2]) }
+        { Atom(("not", 1), [$2]) }
     | CUT
-        { Atom("!", []) }
+        { Atom(("!", 0), []) }
 ;
 
 term_list:
     | term
         { [$1] }
     | term COMMA term_list
-        { [$1]::$3 }
+        { ($1)::$3 }
 ;
 
 term:
     | LPAREN term LPAREN
         { $2 }
+    | UNDERLINE
+        { Under }
     | VAR
         { Var($1) }
     | CONST
-        { Node($1,[]) }
+        { Node(($1, 0),[]) }
     | INT
         { Num($1) }
     | CONST LPAREN term_list RPAREN
-        { Node($1,$3) }
+        { Node(($1, 1),$3) }
     | term PLUS term
-        { Node("+", [$1, $3]) }
+        { Node(("+", 2), [$1; $3]) }
     | term MINUS term
-        { Node("-", [$1, $3]) }
+        { Node(("-", 2), [$1; $3]) }
     | term TIMES term
-        { Node("*", [$1, $3]) }
+        { Node(("*", 2), [$1; $3]) }
     | term DIV term
-        { Node("/", [$1, $3]) }
+        { Node(("/", 2), [$1; $3]) }
     | list
         { $1 }
 ;
 
 list:
-    | LBRACKET RBRAKET
-        { Node("_emptylist", []) }
-    | LBRACKET list_body RBRAKET
+    | LBRACKET RBRACKET
+        { Node(("_emptylist", 0), []) }
+    | LBRACKET list_body RBRACKET
         { $2 }
 ;
 
 list_body:
     | term
-        { Node("_list", [$1; Node("_emptylist", [])]) }
+        { Node(("_list", 2), [$1; Node(("_emptylist", 0), [])]) }
     | term COMMA list_body
-        { Node("_list", [$1, $3]) }
+        { Node(("_list", 2), [$1; $3]) }
     | term PIPE term
-        { Node("_list", [$1; $3]) }
+        { Node(("_list", 2), [$1; $3]) }
 ;
