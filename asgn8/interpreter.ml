@@ -58,24 +58,24 @@ let rec vars_from_term (t : term) : (variable list) =
 let vars_from_atom (Atom(sym, ls) : atomic) : (variable list) = 
   vars_from_term (Node(sym, ls));;
   
-  let rec vars_from_goal (Goal(g) : goal) : (variable list) = 
-    fold_left union [] (map vars_from_atom g);;
-  
-  let rec substitute (s:substitution) (t:term) : term = 
-    match t with
-    | Var v -> (
-      match s with
-        [] -> t
-      | s'::sl -> if (fst s') = v then snd s' else substitute sl t 
-      )
-    | Node (n , clist) ->
-      Node (n, map (substitute s) clist)
-    | _ -> t
-  ;;
-  
-  let substitute_atom (s:substitution) (Atom(sym, ls) : atomic) : atomic =
-    Atom(sym, map (substitute s) ls)
-  ;;
+let rec vars_from_goal (Goal(g) : goal) : (variable list) = 
+  fold_left union [] (map vars_from_atom g);;
+
+let rec substitute (s:substitution) (t:term) : term = 
+  match t with
+  | Var v -> (
+    match s with
+      [] -> t
+    | s'::sl -> if (fst s') = v then snd s' else substitute sl t 
+    )
+  | Node (n , clist) ->
+    Node (n, map (substitute s) clist)
+  | _ -> t
+;;
+
+let substitute_atom (s:substitution) (Atom(sym, ls) : atomic) : atomic =
+  Atom(sym, map (substitute s) ls)
+;;
     
 let rec compose_subst (s1: substitution) (s2: substitution) : substitution =
   let rec compose_helper acc = function
