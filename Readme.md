@@ -13,3 +13,13 @@
 - <a href = "https://github.com/adityjhaa/col226/tree/main/asgn8">*Assignment 8*</a> : A Prolog Enterpreter 
   
 <hr>
+
+### Course Text
+
+- <a href="https://github.com/adityjhaa/col226/blob/main/books/pl.pdf">Programming Languages</a> (Prof. S. Arun Kumar)
+- <a href="https://github.com/adityjhaa/col226/blob/main/books/ocaml.pdf">OCAML from the very Beginning</a> (Ocaml software Foundation)
+- <a href="https://github.com/adityjhaa/col226/blob/main/books/prolog.pdf">Programming in Prolog</a> (Clocksin & Mellish)
+- <a href="https://github.com/adityjhaa/col226/blob/main/books/Programming%20language%20pragmatics.pdf">Programming Language Pragmatics</a> (Michael L. Scott)
+- <a href="https://github.com/adityjhaa/col226/blob/main/books/Algorithms%20%2B%20Data%20Structures%20%3D%20Programs%20.pdf">Algrithms + Data Structures = Programs</a> (Niklaus Wirth)
+
+<hr>
