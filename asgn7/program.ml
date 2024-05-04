@@ -42,7 +42,7 @@ let rec eval (c:closure) (s:stack) : closure =
   | Clos(Snd(e0), t), _          -> Clos(snd' (eval (Clos(e0, t)) s), t)
   | Clos(Abs(_, _), _), []       -> c
   | Clos(Abs(x, e), t), cl::s'   -> eval (Clos(e, (V x, cl)::t)) s'
-  | Clos(App(e1, e2), t), _ -> eval (Clos(e1, t)) (Clos(e2, t)::s)
+  | Clos(App(e1, e2), t), _      -> eval (Clos(e1, t)) (Clos(e2, t)::s)
 and
 (* evaluating functions *)
 add (c1:closure) (c2:closure) : exp = 
